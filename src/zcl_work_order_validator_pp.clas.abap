@@ -35,15 +35,12 @@ CLASS zcl_work_order_validator_pp IMPLEMENTATION.
 
 
 METHOD validate_create_order.
-
-
  " Check if customer exists
  select single
  from ztcustomer2
  fields customer_id
  where customer_id EQ @iv_customer_id
  into @DATA(lv_customer_exists).
-
  IF lv_customer_exists IS INITIAL.
  rv_valid = abap_false.
  RETURN.
@@ -76,7 +73,6 @@ METHOD validate_create_order.
 
  rv_valid = abap_true.
  ENDMETHOD.
-
 
 
  METHOD validate_update_order.
