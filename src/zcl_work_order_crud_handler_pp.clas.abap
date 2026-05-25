@@ -29,19 +29,19 @@ CLASS zcl_work_order_crud_handler_pp IMPLEMENTATION.
 *
 *    IF lv_create_granded EQ abap_true.
 
-      DATA(lo_valida) = NEW zcl_work_order_validator_pp( ).
+    DATA(lo_valida) = NEW zcl_work_order_validator_pp( ).
 
-      DATA(lv_valida) = lo_valida->validate_create_order(
-                          iv_customer_id   = is_work_order-customer_id
-                          iv_technician_id = is_work_order-technician_id
-                          iv_priority      = is_work_order-priority
-                        ).
-      IF  lv_valida EQ abap_true.
-        INSERT INTO ztwork_order VALUES @is_work_order.
-        IF sy-subrc EQ 0.
-          COMMIT WORK AND WAIT.
-        ENDIF.
+    DATA(lv_valida) = lo_valida->validate_create_order(
+                        iv_customer_id   = is_work_order-customer_id
+                        iv_technician_id = is_work_order-technician_id
+                        iv_priority      = is_work_order-priority
+                      ).
+    IF  lv_valida EQ abap_true.
+      INSERT INTO ztwork_order VALUES @is_work_order.
+      IF sy-subrc EQ 0.
+        COMMIT WORK AND WAIT.
       ENDIF.
+    ENDIF.
 *    ENDIF.
   ENDMETHOD.
 
@@ -55,18 +55,18 @@ CLASS zcl_work_order_crud_handler_pp IMPLEMENTATION.
 *
 *    IF lv_create_granded EQ abap_true.
 
-      DATA(lo_valida) = NEW zcl_work_order_validator_pp( ).
+    DATA(lo_valida) = NEW zcl_work_order_validator_pp( ).
 
-      DATA(lv_valida) = lo_valida->validate_delete_order(
-                          iv_work_order_id = is_work_order-work_order_id
-                          iv_status        = is_work_order-status
-                        ).
-      IF  lv_valida EQ abap_true.
-        DELETE FROM ztwork_order WHERE work_order_id =  @is_work_order-work_order_id.
-        IF sy-subrc EQ 0.
-          COMMIT WORK AND WAIT.
-        ENDIF.
+    DATA(lv_valida) = lo_valida->validate_delete_order(
+                        iv_work_order_id = is_work_order-work_order_id
+                        iv_status        = is_work_order-status
+                      ).
+    IF  lv_valida EQ abap_true.
+      DELETE FROM ztwork_order WHERE work_order_id =  @is_work_order-work_order_id.
+      IF sy-subrc EQ 0.
+        COMMIT WORK AND WAIT.
       ENDIF.
+    ENDIF.
 *    ENDIF.
   ENDMETHOD.
 
@@ -78,10 +78,16 @@ CLASS zcl_work_order_crud_handler_pp IMPLEMENTATION.
 *    DATA(lv_create_granded) = COND #( WHEN sy-subrc = 0 THEN abap_true ELSE abap_false ).
 *
 *    IF lv_create_granded EQ abap_true.
-      SELECT SINGLE FROM ztwork_order
-      FIELDS *
-      WHERE work_order_id EQ @iv_id_work_order
-      INTO @os_work_order.
+    DATA lv_datasource_name TYPE string.
+
+    lv_datasource_name = 'ZTWORK_ORDER'.
+    TRY.
+        SELECT SINGLE FROM (lv_datasource_name)
+        FIELDS *
+        WHERE work_order_id EQ @iv_id_work_order
+        INTO @os_work_order.
+      CATCH cx_sy_dynamic_osql_syntax INTO DATA(lx_dynamic_osql).
+    ENDTRY.
 *    ENDIF.
 
   ENDMETHOD.
@@ -95,18 +101,18 @@ CLASS zcl_work_order_crud_handler_pp IMPLEMENTATION.
 *
 *    IF lv_create_granded EQ abap_true.
 
-      DATA(lo_valida) = NEW zcl_work_order_validator_pp( ).
+    DATA(lo_valida) = NEW zcl_work_order_validator_pp( ).
 
-      DATA(lv_valida) = lo_valida->validate_update_order(
-                          iv_work_order_id = is_work_order-work_order_id
-                          iv_status        = is_work_order-status
-                        ).
-      IF  lv_valida EQ abap_true.
-        UPDATE ztwork_order FROM @is_work_order.
-        IF sy-subrc EQ 0.
-          COMMIT WORK AND WAIT.
-        ENDIF.
+    DATA(lv_valida) = lo_valida->validate_update_order(
+                        iv_work_order_id = is_work_order-work_order_id
+                        iv_status        = is_work_order-status
+                      ).
+    IF  lv_valida EQ abap_true.
+      UPDATE ztwork_order FROM @is_work_order.
+      IF sy-subrc EQ 0.
+        COMMIT WORK AND WAIT.
       ENDIF.
+    ENDIF.
 *    ENDIF.
   ENDMETHOD.
 
